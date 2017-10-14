@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Extension.ExtraTypes.IntVector2;
@@ -7,24 +7,32 @@ namespace PathFinding
 {
     public class GridGraph
     {
+        [Serializable]
+        public class Setting
+        {
+            public LayerMask unwalkableMask;
+            public Vector3 gridWorldPosition;
+            public Vector2 gridWorldSize;
+            public float nodeRadius;
+        }
+
         private LayerMask unwalkableMask;
         private Vector3 gridWorldPosition;
         private Vector2 gridWorldSize;
         private float nodeRadius;
+
         private IntVector2 gridSize;
 
         public float NodeDiameter { get; private set; }
         public Node[,] Grid { get; private set; }
         public int Area { get { return gridSize.X * gridSize.Y; } }
 
-        public GridGraph() : this(0, Vector2.one, Vector3.zero) { }
-
-        public GridGraph(LayerMask unwalkableMask, Vector2 gridWorldSize, Vector3 gridWorldPosition, float nodeRadius = 1f)
+        public GridGraph(Setting setting)
         {
-            this.unwalkableMask = unwalkableMask;
-            this.gridWorldPosition = gridWorldPosition;
-            this.gridWorldSize = gridWorldSize;
-            this.nodeRadius = nodeRadius;
+            unwalkableMask = setting.unwalkableMask;
+            gridWorldPosition = setting.gridWorldPosition;
+            gridWorldSize = setting.gridWorldSize;
+            nodeRadius = setting.nodeRadius;
 
             NodeDiameter = nodeRadius * 2;
             gridSize = new IntVector2(Mathf.RoundToInt(gridWorldSize.x / NodeDiameter), Mathf.RoundToInt(gridWorldSize.y / NodeDiameter));
@@ -109,5 +117,17 @@ namespace PathFinding
             return (distanceX > distanceY) ? 14 * distanceY + 10 * (distanceX - distanceY) : 14 * distanceX + 10 * (distanceY - distanceX);
         }
 
+        /// <summary>
+        /// Clear Hcost and Gcost of all the nodes in the map.
+        /// Use this before switching to another path finding solution in the same scene.
+        /// </summary>
+        public void ClearMapData ()
+        {
+            foreach (Node node in Grid)
+            {
+                node.HCost = 0;
+                node.GCost = 0;
+            }
+        }
     }
 }
