@@ -31,7 +31,7 @@ namespace PathFinding.PathFinder
                     if (!neighbour.Walkable || closedSet.Contains(neighbour))
                         continue;
 
-                    int newMovementCostToNeighbour = currentNode.GCost + gridGraph.GetDistance(currentNode, neighbour);
+                    int newMovementCostToNeighbour = currentNode.GCost + gridGraph.GetDistance(currentNode, neighbour) + neighbour.Weight;
                     if (newMovementCostToNeighbour < neighbour.GCost || !openNodes.Contains(neighbour))
                     {
                         neighbour.GCost = newMovementCostToNeighbour;

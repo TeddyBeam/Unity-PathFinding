@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using PathFinding;
 using PathFinding.PathFinder;
-using BaseSystems.DesignPatterns.Observer;
 using BaseSystems.TimingCoroutine;
 
 namespace Main.Player
@@ -28,8 +27,6 @@ namespace Main.Player
             playerRigidbody = setting.playerTransfrom;
             speed = setting.speed;
             this.pathFinder = pathFinder;
-
-            this.RegisterListener(ObserverEventID.OnPlayerClickDetected, (param) => StartMoving((Vector3)param));
         }
 
         public void StartMoving (Vector3 target)
@@ -51,7 +48,7 @@ namespace Main.Player
                 Vector3 currentTarget = path.Pop().Position;
                 while (path.Count > 0)
                 {
-                    if (Vector3.Distance(currentTarget, playerRigidbody.position) <= 0.01f)
+                    if (Vector3.Distance(currentTarget, playerRigidbody.position) <= 0.1f)
                         currentTarget = path.Pop().Position;
 
                     playerRigidbody.position = Vector3.Slerp(playerRigidbody.position, currentTarget, speed);

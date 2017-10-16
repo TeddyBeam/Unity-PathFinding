@@ -27,7 +27,8 @@ namespace Main.Installers
             Container.Bind<GridGraph.Setting>().FromInstance(gridGraphSetting);
 
             Container.Bind<GridGraph>().AsSingle().NonLazy();
-            Container.Bind<PlayerWaypointsMovement>().AsSingle().NonLazy();            
+            Container.Bind<PlayerWaypointsMovement>().AsSingle().NonLazy();
+            Container.Bind<PlayerInputHandler>().AsSingle().NonLazy();
         }
     }
 }

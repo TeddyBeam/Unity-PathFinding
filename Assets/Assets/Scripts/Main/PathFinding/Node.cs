@@ -15,6 +15,11 @@ namespace PathFinding
         public IntVector2 Coordinate { get; set; }
 
         /// <summary>
+        /// Movement penalty value. 
+        /// </summary>
+        public int Weight { get; set; }
+
+        /// <summary>
         /// The node we have to go through to get to this node.
         /// </summary>
         public Node PreviousNode { get; set; }
@@ -38,13 +43,14 @@ namespace PathFinding
 
         public int HeapIndex { get; set; }
 
-        public Node () : this (false, Vector3.zero, new IntVector2(0, 0)) { }
+        public Node () : this (false, Vector3.zero, new IntVector2(0, 0), 0) { }
 
-        public Node(bool walkable, Vector3 position, IntVector2 gridCoordinate)
+        public Node(bool walkable, Vector3 position, IntVector2 gridCoordinate, int weight)
         {
             Walkable = walkable;
             Position = position;
             Coordinate = gridCoordinate;
+            Weight = weight;
             NeighbourNodes = new List<Node>();
         }
 

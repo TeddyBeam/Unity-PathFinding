@@ -2,7 +2,6 @@
 using System.Linq;
 using UnityEngine;
 using BaseSystems.DesignPatterns.DependencyInjection;
-using BaseSystems.DesignPatterns.Observer;
 
 namespace Main.Player
 {
@@ -20,11 +19,14 @@ namespace Main.Player
         private float rayCastMaxDistance;
         private LayerMask inputLayers;
 
-        public PlayerInputHandler (Setting setting)
+        private PlayerWaypointsMovement playerMovement;
+
+        public PlayerInputHandler (Setting setting, PlayerWaypointsMovement playerMovement)
         {
             mainCamera = setting.mainCamera;
             rayCastMaxDistance = setting.rayCastMaxDistance;
             inputLayers = setting.inputLayers;
+            this.playerMovement = playerMovement;
         }
 
         public void Tick()
@@ -35,7 +37,7 @@ namespace Main.Player
                 RaycastHit hit;
                 if (Physics.Raycast(ray.origin, ray.direction, out hit, rayCastMaxDistance, inputLayers))
                 {
-                    this.PostEvent(ObserverEventID.OnPlayerClickDetected, hit.point);
+                    playerMovement.StartMoving(hit.point);
                 }
             }
         }

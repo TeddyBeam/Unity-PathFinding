@@ -17,12 +17,11 @@ namespace PathFinding
         }
 
         private LayerMask unwalkableMask;
-        private Vector3 gridWorldPosition;
-        private Vector2 gridWorldSize;
         private float nodeRadius;
-
         private IntVector2 gridSize;
 
+        public Vector3 GridWorldPosition { get; private set; }
+        public Vector2 GridWorldSize { get; private set; }
         public float NodeDiameter { get; private set; }
         public Node[,] Grid { get; private set; }
         public int Area { get { return gridSize.X * gridSize.Y; } }
@@ -30,12 +29,12 @@ namespace PathFinding
         public GridGraph(Setting setting)
         {
             unwalkableMask = setting.unwalkableMask;
-            gridWorldPosition = setting.gridWorldPosition;
-            gridWorldSize = setting.gridWorldSize;
+            GridWorldPosition = setting.gridWorldPosition;
+            GridWorldSize = setting.gridWorldSize;
             nodeRadius = setting.nodeRadius;
 
             NodeDiameter = nodeRadius * 2;
-            gridSize = new IntVector2(Mathf.RoundToInt(gridWorldSize.x / NodeDiameter), Mathf.RoundToInt(gridWorldSize.y / NodeDiameter));
+            gridSize = new IntVector2(Mathf.RoundToInt(GridWorldSize.x / NodeDiameter), Mathf.RoundToInt(GridWorldSize.y / NodeDiameter));
 
             InitGrid();
         }
@@ -43,7 +42,7 @@ namespace PathFinding
         private void InitGrid ()
         {
             Grid = new Node[gridSize.X, gridSize.Y];
-            Vector3 worldBottomLeft = gridWorldPosition - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
+            Vector3 worldBottomLeft = GridWorldPosition - Vector3.right * GridWorldSize.x / 2 - Vector3.forward * GridWorldSize.y / 2;
 
             // Initialize all the nodes.
             for (int x = 0; x < gridSize.X; x++)
@@ -52,8 +51,7 @@ namespace PathFinding
                 {
                     Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * NodeDiameter + nodeRadius) + Vector3.forward * (y * NodeDiameter + nodeRadius);
                     bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
-
-                    Grid[x, y] = new Node(walkable, worldPoint, new IntVector2(x, y));
+                    Grid[x, y] = new Node(walkable, worldPoint, new IntVector2(x, y), 0);
                 }
             }
 
@@ -91,8 +89,8 @@ namespace PathFinding
         {
             if (Grid != null)
             {
-                float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
-                float percentY = (worldPosition.z + gridWorldSize.y / 2) / gridWorldSize.y;
+                float percentX = (worldPosition.x + GridWorldSize.x / 2) / GridWorldSize.x;
+                float percentY = (worldPosition.z + GridWorldSize.y / 2) / GridWorldSize.y;
                 percentX = Mathf.Clamp01(percentX);
                 percentY = Mathf.Clamp01(percentY);
 
