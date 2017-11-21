@@ -3743,7 +3743,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerMovementSetting:
     playerTransfrom: {fileID: 2067382206}
-    speed: 1
+    movingTime: 0.5
   playerInputSetting:
     mainCamera: {fileID: 1593460777}
     rayCastMaxDistance: 100
@@ -3756,7 +3756,7 @@ MonoBehaviour:
       m_Bits: 256
     gridWorldPosition: {x: 0, y: 0, z: 0}
     gridWorldSize: {x: 40, y: 40}
-    nodeRadius: 0.1
+    nodeRadius: 0.2
 --- !u!4 &1629068843
 Transform:
   m_ObjectHideFlags: 0

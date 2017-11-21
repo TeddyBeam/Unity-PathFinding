@@ -13,10 +13,10 @@ namespace Main.Player
         public class Setting
         {
             public Rigidbody playerTransfrom;
-            public float speed;
+            public float movingTime;
         }
 
-        private float speed;
+        private float movingTime;
         private Rigidbody playerRigidbody;
         private IPathFinder pathFinder;
 
@@ -25,11 +25,11 @@ namespace Main.Player
         public PlayerWaypointsMovement(IPathFinder pathFinder, Setting setting)
         {
             playerRigidbody = setting.playerTransfrom;
-            speed = setting.speed;
+            movingTime = setting.movingTime;
             this.pathFinder = pathFinder;
         }
 
-        public void StartMoving (Vector3 target)
+        public void StartMoving(Vector3 target)
         {
             if (isMoving)
                 Timing.KillCoroutines("Move");
@@ -37,27 +37,44 @@ namespace Main.Player
             Timing.RunCoroutine(Move(target), "Move");
         }
 
-        public IEnumerator<float> Move (Vector3 target)
+        public IEnumerator<float> Move(Vector3 target)
         {
             Stack<Node> path = pathFinder.FindPath(playerRigidbody.position, target);
-            
+
+            if (path == null)
+                yield break;
+
             isMoving = true;
 
-            if (path != null)
+            Vector3 currentTarget = path.Pop().Position;
+            Debug.Log("running to: " + currentTarget);
+            while (path.Count > 0)
             {
-                Vector3 currentTarget = path.Pop().Position;
-                while (path.Count > 0)
+                if (Vector3.Distance(currentTarget, playerRigidbody.position) <= 0.1f)
                 {
-                    if (Vector3.Distance(currentTarget, playerRigidbody.position) <= 0.1f)
-                        currentTarget = path.Pop().Position;
-
-                    playerRigidbody.position = Vector3.Slerp(playerRigidbody.position, currentTarget, speed);
-
-                    yield return Timing.WaitForOneFrame;
+                    Debug.Log("running to next target: " + currentTarget);
+                    currentTarget = path.Pop().Position;
                 }
+
+                yield return Timing.WaitUntilDone(Timing.RunCoroutine(SmoothMoveTo(currentTarget)));
+
+                // yield return Timing.WaitForOneFrame;
             }
 
             isMoving = false;
+        }
+
+        public IEnumerator<float> SmoothMoveTo(Vector3 currentTarget)
+        {
+            float timeFrac = 0f;
+            var startingPosition = playerRigidbody.position;
+
+            while (timeFrac <= movingTime)
+            {
+                timeFrac += Time.deltaTime;
+                playerRigidbody.transform.position = Vector3.Lerp(startingPosition, currentTarget, timeFrac / movingTime);
+                yield return Timing.WaitForOneFrame;
+            }
         }
     }
 }
